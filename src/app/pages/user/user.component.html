@@ -1,0 +1,287 @@
+<div class="header bg-translucent-primary py-7 py-lg-8">
+  <div class="container">
+    <div class="header-body text-center">
+      <ul class="nav nav-pills nav-fill flex-column flex-sm-row" id="tabs-text" role="tablist">
+        <li class="nav-item">
+          <button type="button" (click)="openModalCreate(modalFormCreated)" class="btn btn-block btn-primary"
+                  data-toggle="modal"
+                  data-target="#modal-form">Crear usuario
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="separator separator-bottom separator-skew zindex-100">
+    <svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
+      <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
+    </svg>
+  </div>
+</div>
+
+<div class="container-fluid mt--7">
+  <div class="row">
+    <div class="col">
+      <div class="card shadow">
+        <div class="card-header border-0">
+          <h3 class="mb-0">Usuarios</h3>
+        </div>
+        <div class="table-responsive">
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+            <tr>
+              <th scope="col">Nombre</th>
+              <th scope="col">Apellido</th>
+              <th scope="col">Estado</th>
+              <th scope="col">Correo</th>
+              <th scope="col">Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let user of this.users">
+              <td>
+                {{user.name}}
+              </td>
+              <td>
+                {{user.surname}}
+              </td>
+              <td>
+                <span class="badge badge-dot mr-4" *ngIf="user.active">
+                    <i class="bg-success"></i> Activo
+                  </span>
+                <span class="badge badge-dot mr-4" *ngIf="!user.active">
+                    <i class="bg-danger"></i> Inactivo
+                </span>
+              </td>
+              <td>
+                {{user.email}}
+              </td>
+              <td>
+                <button type="button" class="btn btn-outline-primary"
+                        (click)="openModalDetailUser(modalDetailUser,user._id)">Detalle
+                </button>
+                <button type="button" class="btn btn-outline-info" (click)="openModalUserEdit(modalEditUser,user)">
+                  Actualizar
+                </button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #modalFormCreated let-modal>
+  <div class="card bg-secondary border-0 mb-0">
+    <div class="modal-header">
+      <h5 class="modal-title" id="exampleModalLabel">Crear usuario</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+              (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="card-body px-lg-5 py-lg-5">
+      <form role="form" [formGroup]="user" (ngSubmit)="addUser()">
+        <div class="form-group mb-3">
+          <div class="input-group input-group-merge input-group-alternative">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="ni ni-single-02"></i></span>
+            </div>
+            <input class="form-control" placeholder="Nombre" type="text" formControlName="name" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-group input-group-merge input-group-alternative">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="ni ni-single-02"></i></span>
+            </div>
+            <input class="form-control" placeholder="Apellido" type="text" formControlName="surname" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="typeDocument">Tipo de documento</label>
+          <select id="typeDocument" class="form-control" formControlName="documentType" required>
+            <option selected>Seleccione un tipo de documento</option>
+            <option value="CC">Cedula de ciudadania</option>
+            <option value="CE">Cedula de extrangeria</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <div class="input-group input-group-merge input-group-alternative">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="ni ni-badge"></i></span>
+            </div>
+            <input class="form-control" placeholder="Documento" type="number" formControlName="document" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-group input-group-merge input-group-alternative">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="ni ni-collection"></i></span>
+            </div>
+            <input class="form-control" placeholder="Telefono o Celular" type="number" formControlName="phone" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-group input-group-merge input-group-alternative">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="ni ni-email-83"></i></span>
+            </div>
+            <input class="form-control" placeholder="Correo" type="email" formControlName="email" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-group input-group-merge input-group-alternative">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+            </div>
+            <input class="form-control" placeholder="Contraseña" type="password" formControlName="password" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" formControlName="active" required>
+            <label class="form-check-label" for="active">Activo</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" id="isAdmin" formControlName="isAdmin" required>
+            <label class="form-check-label" for="isAdmin">Administrador</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inputState">Comercio</label>
+          <select id="inputState" class="form-control" formControlName="commerce" required>
+            <option selected>Seleccione un comercio</option>
+            <option *ngFor="let commerce of this.commerces" value="{{commerce._id}}">{{commerce.name}}</option>
+          </select>
+        </div>
+        <div class="text-center">
+          <button type="submit" class="btn btn-primary my-4">Crear usuario</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #modalDetailUser let-modal>
+  <div class="card bg-secondary border-0 mb-0">
+    <div class="modal-header">
+      <h5 class="modal-title" id="example2ModalLabel">Usuario</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+              (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="card-body px-lg-5 py-lg-5">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">Nombre : {{this.userInfo?.name}}</li>
+        <li class="list-group-item">Apellido : {{this.userInfo?.surname}}</li>
+        <li class="list-group-item">Correo : {{this.userInfo?.email}}</li>
+        <li class="list-group-item">Creado : {{this.userInfo?.createdAt}}</li>
+        <li class="list-group-item">Actualizado : {{this.userInfo?.updatedAt}}</li>
+        <li class="list-group-item">Estado : {{this.userInfo?.active ? 'Si' : 'No'}}</li>
+        <li class="list-group-item">Administrador : {{this.userInfo?.isAdmin ? 'Si' : 'No'}}</li>
+        <li class="list-group-item">Comercios :
+          <span class="badge badge-primary" *ngFor="let commerce of this.userInfo?.commerces">
+              {{commerce.name}}
+          </span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #modalEditUser let-modal>
+  <div class="card bg-secondary border-0 mb-0">
+    <div class="modal-header">
+      <h5 class="modal-title" id="modalEditUser">Crear usuario</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+              (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="card-body px-lg-5 py-lg-5">
+      <form (ngSubmit)="submitEditUser($event)" novalidate>
+        <div class="form-group">
+          <label for="name">Nombre</label>
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            [(ngModel)]="userEditForm.name"
+            name="name"
+          />
+        </div>
+        <div class="form-group">
+          <label for="surname">Apellido</label>
+          <input
+            type="text"
+            class="form-control"
+            id="surname"
+            [(ngModel)]="userEditForm.surname"
+            name="surname"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="email">Correo</label>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            [(ngModel)]="userEditForm.email"
+            name="email"
+            required
+          />
+        </div>
+        <div class="form-group form-check">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            id="active"
+            [(ngModel)]="userEditForm.active"
+            name="active"
+            required
+          />
+          <label class="form-check-label" for="active">Activo</label>
+        </div>
+        <div class="form-group">
+          <label for="documentType">Tipo de documento</label>
+          <select id="documentType" class="form-control" [(ngModel)]="userEditForm.documentType" required>
+            <option value="CC">Cedula de ciudadania</option>
+            <option value="CE">Cedula de extrangeria</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="document">Documento</label>
+          <input
+            type="number"
+            class="form-control"
+            id="document"
+            [(ngModel)]="userEditForm.document"
+            name="document"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="phone">Telefono o celular</label>
+          <input
+            type="number"
+            class="form-control"
+            id="phone"
+            [(ngModel)]="userEditForm.phone"
+            name="phone"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-primary my-4">
+          Actualizar
+        </button>
+      </form>
+    </div>
+  </div>
+</ng-template>
+
