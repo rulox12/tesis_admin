@@ -1,0 +1,209 @@
+<div class="header bg-translucent-warning py-7 py-lg-8">
+  <div class="container">
+    <div class="header-body text-center">
+      <ul class="nav nav-pills nav-fill flex-column flex-sm-row" id="tabs-text" role="tablist">
+        <li class="nav-item">
+          <button type="button" (click)="openModal(modalFormCreated)" class="btn btn-block btn-warning" data-toggle="modal"
+                  data-target="#modal-form">Crear comercios
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="separator separator-bottom separator-skew zindex-100">
+    <svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
+      <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
+    </svg>
+  </div>
+</div>
+<!-- Page content -->
+<div class="container-fluid mt--7">
+  <!-- Table -->
+  <div class="row">
+    <div class="col">
+      <div class="card shadow">
+        <div class="card-header border-0">
+          <h3 class="mb-0">Crear comercios</h3>
+        </div>
+        <div class="table-responsive">
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+            <tr>
+              <th scope="col">Nombre</th>
+              <th scope="col">Estado</th>
+              <th scope="col">NIT</th>
+              <th scope="col">Fecha creacion</th>
+              <th scope="col">Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let commerce of this.commerces">
+              <th scope="row">
+                <div class="media align-items-center">
+                  <a href="javascript:void(0)" class="avatar rounded-circle mr-3">
+                    <img alt="Image placeholder" src="{{baseUrlForImage + commerce.logo}}">
+                  </a>
+                  <div class="media-body">
+                    <span class="mb-0 text-sm">{{commerce.name}}</span>
+                  </div>
+                </div>
+              </th>
+              <td>
+                <span class="badge badge-dot mr-4" *ngIf="commerce.active">
+                    <i class="bg-success"></i> Activo
+                  </span>
+                <span class="badge badge-dot mr-4" *ngIf="!commerce.active">
+                    <i class="bg-danger"></i> Inactivo
+                </span>
+              </td>
+              <td>
+                {{commerce.nit}}
+              </td>
+              <td>
+                {{commerce.createdAt | date }}
+                {{commerce.createdAt | date :'shortTime'}}
+              </td>
+              <td>
+                <button type="button" class="btn btn-info" (click)="openQRModal(modalFormQR,commerce)">QR</button>
+                <button type="button" class="btn btn-outline-primary" (click)="openUpdateModal(commerce,modalFormUpdate)">Actualizar</button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Dark table -->
+</div>
+
+<ng-template #modalFormCreated let-modal>
+  <div class="card bg-secondary border-0 mb-0">
+    <div class="modal-header">
+      <h5 class="modal-title" id="exampleModalLabel">Crear comercio</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="card-body px-lg-5 py-lg-5">
+      <form role="form" [formGroup]="commerce" (ngSubmit)="addCommerce()" enctype="multipart/form-data">
+        <div class="form-group mb-3">
+          <div class="input-group input-group-merge input-group-alternative">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="ni ni-archive-2"></i></span>
+            </div>
+            <input class="form-control" placeholder="Nombre" type="text" formControlName="name">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-group input-group-merge input-group-alternative">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+            </div>
+            <input class="form-control" placeholder="NIT" type="text" formControlName="nit">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="description">Descripcion</label>
+          <textarea class="form-control" formControlName="description" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="logo">Seleccione logo</label>
+          <div class="input-group input-group-merge input-group-alternative">
+            <input type="file" class="form-control" lang="en" formControlName="logo" (change)="onFileChange($event)">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="color">Color</label>
+          <input class="form-control" formControlName="color" type="color">
+        </div>
+        <div class="text-center">
+          <button type="submit" class="btn btn-primary my-4">Crear</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #modalFormUpdate let-modal>
+  <div class="card bg-secondary border-0 mb-0">
+    <div class="modal-header">
+      <h5 class="modal-title" id="updateModalLabel">Actualizar comercio</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="card-body px-lg-5 py-lg-5">
+      <form role="form" (ngSubmit)="submitEditCommerce($event)" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="name">Nombre</label>
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            [(ngModel)]="companyEditForm.name"
+            name="name"
+          />
+        </div>
+        <div class="form-group">
+          <label for="description">Descripcion</label>
+          <textarea
+            type="text"
+            class="form-control"
+            id="description"
+            [(ngModel)]="companyEditForm.description"
+            name="description"
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label for="nit">Nit</label>
+          <input
+            type="text"
+            class="form-control"
+            id="nit"
+            [(ngModel)]="companyEditForm.nit"
+            name="nit"
+          />
+        </div>
+        <div class="form-group">
+          <label for="color">Color</label>
+          <input
+            type="color"
+            class="form-control"
+            id="color"
+            [(ngModel)]="companyEditForm.color"
+            name="color"
+          />
+        </div>
+        <div class="form-group form-check">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            id="active"
+            [(ngModel)]="companyEditForm.active"
+            name="active"
+          />
+          <label class="form-check-label" for="active">Estado</label>
+        </div>
+        <div class="text-center">
+          <button type="submit" class="btn btn-primary my-4">Actualizar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #modalFormQR let-modal>
+  <div class="card bg-secondary border-0 mb-0">
+    <div class="modal-header">
+      <h5 class="modal-title" id="example2ModalLabel">QR comercio</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="card-body px-lg-4 py-lg-4">
+      <qrcode style="text-align: center" [qrdata]="this.myAngularxQrCode" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
+    </div>
+  </div>
+</ng-template>
+
